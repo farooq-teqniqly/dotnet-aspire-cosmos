@@ -39,6 +39,9 @@ jobs:
           fi
 
           echo "All required secrets are configured"
+      
+      - name: Checkout code
+        uses: actions/checkout@v4
           
       - name: Login to Azure
         uses: azure/login@v2
