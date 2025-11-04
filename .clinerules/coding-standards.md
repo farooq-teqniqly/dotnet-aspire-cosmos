@@ -32,6 +32,14 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 - **Unit tests**: Write unit tests for all business logic
 - **Test naming**: Use descriptive test method names following the pattern `MethodName_Scenario_ExpectedResult`
 - **Test coverage**: Aim for high test coverage, especially for critical business logic
+- **Assertion library**: Use the built-in assertion library (`Assert`) - do not use 3rd party libraries like FluentAssertions
+- **Mocking framework**: If mocking is required, use NSubstitute
+
+## Code Review
+
+- **Persistent records**: Generate a file with code review results in addition to chat output
+- **File format**: Use Markdown format with timestamp (e.g., `code-review-results-2025-11-04-143022.md`) for review documentation
+- **Content structure**: Include summary of findings, detailed issues with references, suggested fixes, and action items
 
 ## Documentation
 
@@ -56,4 +64,6 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 - **Web API projects**: When creating C# Web API projects, always use the following options:
   - `--use-program-main`: Use the new program style main entry point
   - `--use-controllers`: Generate controllers instead of minimal APIs
+- **Swagger configuration**: Configure Web API projects with Swagger/OpenAPI when running in development mode for API documentation and testing
+- **Test projects**: Create an empty XUnit test project alongside each Web API project, named with the Web API project name suffixed with ".Tests"
 - **Project organization**: Place each new project in its own dedicated folder for better organization
