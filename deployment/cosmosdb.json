@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.38.33.27573",
+      "templateHash": "17329893507801611330"
+    }
+  },
+  "parameters": {
+    "accountName": {
+      "type": "string"
+    },
+    "tags": {
+      "type": "object",
+      "defaultValue": {
+        "project": "dotnet-aspire-cosmosdb",
+        "owner": "farooq-teqniqly"
+      }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2023-11-15",
+      "name": "[parameters('accountName')]",
+      "location": "[resourceGroup().location]",
+      "tags": "[parameters('tags')]",
+      "properties": {
+        "databaseAccountOfferType": "Standard",
+        "locations": [
+          {
+            "locationName": "[resourceGroup().location]",
+            "failoverPriority": 0
+          }
+        ],
+        "enableFreeTier": true,
+        "enablePartitionMerge": false,
+        "enableMultipleWriteLocations": false,
+        "enableAutomaticFailover": false,
+        "publicNetworkAccess": "Enabled",
+        "backupPolicy": {
+          "type": "Periodic",
+          "periodicModeProperties": {
+            "backupIntervalInMinutes": 1440,
+            "backupRetentionIntervalInHours": 48,
+            "backupStorageRedundancy": "Local"
+          }
+        },
+        "disableLocalAuth": false
+      }
+    }
+  ],
+  "outputs": {
+    "endpoint": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName')), '2023-11-15').documentEndpoint]"
+    },
+    "primaryMasterKey": {
+      "type": "string",
+      "value": "[listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName')), '2023-11-15').primaryMasterKey]"
+    },
+    "connectionString": {
+      "type": "string",
+      "value": "[format('AccountEndpoint={0};AccountKey={1};', reference(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName')), '2023-11-15').documentEndpoint, listKeys(resourceId('Microsoft.DocumentDB/databaseAccounts', parameters('accountName')), '2023-11-15').primaryMasterKey)]"
+    }
+  }
+}
