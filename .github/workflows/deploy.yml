@@ -93,4 +93,4 @@ jobs:
         id: outputs
         run: |
           outputs=$(az deployment group show --name ${{ env.ROOT_NAME }}-deploy-infra-${{ steps.commit.outputs.hash }} --resource-group ${{ env.ROOT_NAME }}-rg --query properties.outputs -o json)
-          echo "cosmosdb_endpoint=$(echo $outputs | jq -r '.database_endpoint.value')" >> $GITHUB_OUTPUT
+          echo "cosmosaccount_endpoint=$(echo $outputs | jq -r '.database_endpoint.value')" >> $GITHUB_OUTPUT

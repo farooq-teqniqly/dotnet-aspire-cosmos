@@ -9,7 +9,7 @@ param rootName string
 param tags object = {}
 
 
-resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
+resource cosmosaccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   name: take('${rootName}-cdb', 40)
   location: resourceGroup().location
   tags: tags
@@ -38,4 +38,4 @@ resource cosmosdb 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
   }
 }
 
-output endpoint string = cosmosdb.properties.documentEndpoint
+output endpoint string = cosmosaccount.properties.documentEndpoint
