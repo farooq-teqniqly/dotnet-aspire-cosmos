@@ -34,7 +34,7 @@ resource topic 'Microsoft.ServiceBus/namespaces/topics@2021-11-01' = {
   properties: {
     defaultMessageTimeToLive: 'PT5M'
     maxSizeInMegabytes: 1024
-    requiresDuplicateDetection: false
+    requiresDuplicateDetection: true
     duplicateDetectionHistoryTimeWindow: 'PT10M'
     enableBatchedOperations: true
     supportOrdering: false
