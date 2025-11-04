@@ -8,8 +8,8 @@ param tags object = {
   owner: 'farooq-teqniqly'
 }
 
-module cosmosdb 'cosmosdb.bicep' = {
-  name: 'cosmosdb-deployment'
+module cosmosaccount 'cosmosaccount.bicep' = {
+  name: 'cosmosaccount-deployment'
   params: {
     rootName: rootName
     tags: tags
@@ -17,4 +17,4 @@ module cosmosdb 'cosmosdb.bicep' = {
 }
 
 
-output database_endpoint string = cosmosdb.outputs.endpoint
+output database_endpoint string = cosmosaccount.outputs.endpoint
