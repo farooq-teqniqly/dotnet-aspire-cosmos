@@ -32,7 +32,7 @@ resource topic 'Microsoft.ServiceBus/namespaces/topics@2021-11-01' = {
   parent: servicebusNamespace
   name: topicName
   properties: {
-    defaultMessageTimeToLive: 'PT5M'
+    defaultMessageTimeToLive: 'PT1H'
     maxSizeInMegabytes: 1024
     requiresDuplicateDetection: true
     duplicateDetectionHistoryTimeWindow: 'PT10M'
@@ -49,7 +49,7 @@ resource subscription 'Microsoft.ServiceBus/namespaces/topics/subscriptions@2021
   properties: {
     lockDuration: 'PT1M'
     requiresSession: false
-    defaultMessageTimeToLive: 'PT5M'
+    defaultMessageTimeToLive: 'PT1H'
     deadLetteringOnMessageExpiration: true
     deadLetteringOnFilterEvaluationExceptions: true
     maxDeliveryCount: 10
