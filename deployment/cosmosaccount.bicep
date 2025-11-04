@@ -16,7 +16,7 @@ param containers array
 
 
 resource cosmosaccount 'Microsoft.DocumentDB/databaseAccounts@2023-11-15' = {
-  name: take('${rootName}-cdb', 40)
+  name: take('${rootName}-cosacct', 40)
   location: resourceGroup().location
   tags: tags
   properties: {
