@@ -253,5 +253,5 @@ Reserve EF Core for ancillary, low-volume operations.
 
 ---
 
-**Author:** Farooq Mahmud  
+**Author:** Farooq Mahmud (Teqniqly) 
 **Last Updated:** November 2025
