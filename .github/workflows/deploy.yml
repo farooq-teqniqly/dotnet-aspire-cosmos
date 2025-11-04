@@ -1,0 +1,93 @@
+name: Deploy to Azure
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      root_name:
+        description: "Root name for resources (e.g., tq123cosmos)"
+        required: true
+        default: "tq123cosmos"
+      location:
+        description: "Azure region for resources (e.g., westus2)"
+        required: true
+        default: "westus2"
+
+env:
+  ROOT_NAME: ${{ github.event.inputs.root_name || 'tq123cosmos' }}
+  LOCATION: ${{ github.event.inputs.location || 'westus2' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate required secrets
+        run: |
+          missing_secrets=()
+
+          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ]; then
+            missing_secrets+=("AZURE_CREDENTIALS")
+          fi
+
+          if [ ${#missing_secrets[@]} -ne 0 ]; then
+            echo "Missing required secrets: ${missing_secrets[*]}"
+            echo "Please configure these secrets in your repository settings."
+            exit 1
+          fi
+
+          echo "All required secrets are configured"
+          
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Get commit hash
+        id: commit
+        run: echo "hash=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Create resource group
+        run: az group create --name ${{ env.ROOT_NAME }}-rg --location ${{ env.LOCATION }}
+
+      - name: Upgrade Bicep CLI
+        run: az bicep upgrade
+
+      - name: Deploy Infrastructure
+        id: deploy
+        continue-on-error: true
+        run: |
+          az deployment group create \
+            --name "${{ env.ROOT_NAME }}-deploy-infra-${{ steps.commit.outputs.hash }}" \
+            --resource-group ${{ env.ROOT_NAME }}-rg \
+            --template-file deployment/main.bicep \
+            --parameters \
+               rootName='${{ env.ROOT_NAME }}'
+
+      - name: Show deployment details on failure
+        if: steps.deploy.outcome == 'failure'
+        run: |
+          echo "Deployment failed. Getting deployment details..."
+          az deployment group show \
+            --name "${{ env.ROOT_NAME }}-deploy-infra-${{ steps.commit.outputs.hash }}" \
+            --resource-group ${{ env.ROOT_NAME }}-rg \
+            --output table
+
+          echo "Getting deployment operation details..."
+          az deployment operation group list \
+            --name "${{ env.ROOT_NAME }}-deploy-infra-${{ steps.commit.outputs.hash }}" \
+            --resource-group ${{ env.ROOT_NAME }}-rg \
+            --output table
+
+      - name: Fail workflow if deployment failed
+        if: steps.deploy.outcome == 'failure'
+        run: exit 1
+
+      - name: Get deployment outputs
+        if: steps.deploy.outcome == 'success'
+        id: outputs
+        run: |
+          outputs=$(az deployment group show --name ${{ env.ROOT_NAME }}-deploy-infra-${{ steps.commit.outputs.hash }} --resource-group ${{ env.ROOT_NAME }}-rg --query properties.outputs -o json)
+          echo "cosmosdb_endpoint=$(echo $outputs | jq -r '.database_endpoint.value')" >> $GITHUB_OUTPUT
