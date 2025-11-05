@@ -8,10 +8,11 @@ namespace WineApi.Tests.Wineries
     {
         private readonly WineApiWebApplicationFactory _factory;
 
-        public CreateWineryValidationTests(WineApiWebApplicationFactory factory)
-        {
-            _factory = factory;
-        }
+    public CreateWineryValidationTests(WineApiWebApplicationFactory factory)
+    {
+        ArgumentNullException.ThrowIfNull(factory);
+        _factory = factory;
+    }
 
         public static TheoryData<string> InvalidNameLengthsAboveMaximum()
         {

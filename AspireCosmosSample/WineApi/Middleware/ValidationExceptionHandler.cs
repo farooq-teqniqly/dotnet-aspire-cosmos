@@ -36,6 +36,9 @@ namespace WineApi.Middleware
             CancellationToken cancellationToken
         )
         {
+            ArgumentNullException.ThrowIfNull(httpContext);
+            ArgumentNullException.ThrowIfNull(exception);
+
             if (exception is not ValidationException validationException)
             {
                 return false;

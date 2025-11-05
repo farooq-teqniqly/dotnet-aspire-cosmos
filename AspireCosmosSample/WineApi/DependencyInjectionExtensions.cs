@@ -95,6 +95,11 @@ namespace WineApi
             WebApplication app
         )
         {
+            ArgumentNullException.ThrowIfNull(database);
+            ArgumentException.ThrowIfNullOrWhiteSpace(id);
+            ArgumentException.ThrowIfNullOrWhiteSpace(partitionKeyPath);
+            ArgumentNullException.ThrowIfNull(app);
+
             await database
                 .CreateContainerIfNotExistsAsync(id, partitionKeyPath)
                 .ConfigureAwait(false);

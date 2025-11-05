@@ -41,6 +41,9 @@ namespace WineApi.Controllers
             IValidator<CreateWineryDto> validator
         )
         {
+            ArgumentNullException.ThrowIfNull(createWineryDto);
+            ArgumentNullException.ThrowIfNull(validator);
+
             await validator.ValidateAndThrowAsync(createWineryDto).ConfigureAwait(false);
 
             var createWineryResult = await _wineryRepository
@@ -78,6 +81,8 @@ namespace WineApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<WineryDto>> GetWinery(string wineryId)
         {
+            ArgumentException.ThrowIfNullOrWhiteSpace(wineryId);
+
             var getWineryResult = await _wineryRepository
                 .GetWineryAsync(wineryId, HttpContext.RequestAborted)
                 .ConfigureAwait(false);

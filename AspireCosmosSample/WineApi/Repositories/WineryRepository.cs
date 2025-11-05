@@ -9,7 +9,7 @@ namespace WineApi.Repositories
     /// <summary>
     /// Implements repository operations for wineries using Azure Cosmos DB.
     /// </summary>
-    public class WineryRepository : IWineryRepository
+    public sealed class WineryRepository : IWineryRepository
     {
         private readonly ILogger<WineryRepository> _logger;
         private readonly Container _wineryContainer;

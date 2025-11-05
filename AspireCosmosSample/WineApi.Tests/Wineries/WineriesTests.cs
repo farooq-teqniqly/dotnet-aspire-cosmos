@@ -11,6 +11,7 @@ public sealed class WineriesTests : IClassFixture<WineApiWebApplicationFactory>
 
     public WineriesTests(WineApiWebApplicationFactory factory)
     {
+        ArgumentNullException.ThrowIfNull(factory);
         _factory = factory;
     }
 

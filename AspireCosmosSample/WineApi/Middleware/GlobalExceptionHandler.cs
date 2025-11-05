@@ -35,6 +35,9 @@ namespace WineApi.Middleware
             CancellationToken cancellationToken
         )
         {
+            ArgumentNullException.ThrowIfNull(httpContext);
+            ArgumentNullException.ThrowIfNull(exception);
+
             return _problemDetailsService.TryWriteAsync(
                 new ProblemDetailsContext
                 {
