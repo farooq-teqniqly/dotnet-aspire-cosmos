@@ -55,7 +55,7 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 
 ## Documentation
 
--   **XML comments**: Document public APIs with XML comments
+-   **XML comments**: Document public APIs with XML comments, including constructors, methods, properties, and classes
 -   **README files**: Maintain up-to-date README files for projects and major components
 -   **Code comments**: Use comments sparingly, preferring self-documenting code
 
