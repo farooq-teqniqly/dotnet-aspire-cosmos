@@ -1,6 +1,6 @@
 namespace WineApi.Entities
 {
-    internal sealed class Winery
+    public sealed class Winery
     {
         public DateTimeOffset CreatedAtUtc { get; } = DateTimeOffset.UtcNow;
         public required string Id { get; init; }
