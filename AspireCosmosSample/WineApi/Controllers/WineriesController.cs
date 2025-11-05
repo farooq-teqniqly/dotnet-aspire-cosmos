@@ -41,10 +41,15 @@ namespace WineApi.Controllers
 
         [HttpGet("{wineryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult> GetWinery(string wineryId)
+        public async Task<ActionResult<WineryDto>> GetWinery(string wineryId)
         {
-            await Task.CompletedTask.ConfigureAwait(false);
-            return NoContent();
+            var winery = await _wineryRepository
+                .GetWineryAsync(wineryId, HttpContext.RequestAborted)
+                .ConfigureAwait(false);
+
+            return Ok(
+                new WineryDto(winery.Id, winery.Name, winery.CreatedAtUtc, winery.UpdatedAtUtc)
+            );
         }
     }
 }

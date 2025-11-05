@@ -46,7 +46,7 @@ namespace WineApi.Tests.Wineries
         )
         {
             // Arrange
-            var createWineryDto = new CreateWineryDto { Name = name };
+            var createWineryDto = new CreateWineryDto(name);
             var client = _factory.CreateClient();
 
             // Act
@@ -69,7 +69,7 @@ namespace WineApi.Tests.Wineries
         )
         {
             // Arrange
-            var createWineryDto = new CreateWineryDto { Name = name };
+            var createWineryDto = new CreateWineryDto(name);
             var client = _factory.CreateClient();
 
             // Act

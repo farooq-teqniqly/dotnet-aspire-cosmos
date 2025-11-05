@@ -9,7 +9,7 @@ namespace WineApi.Repositories
         private readonly Container _wineryContainer;
 
         public WineryRepository(
-            [FromKeyedServices("Wineries")] Container wineryContainer,
+            [FromKeyedServices(CosmosDbConstants.Containers.Wineries)] Container wineryContainer,
             ILogger<WineryRepository> logger
         )
         {
@@ -27,7 +27,11 @@ namespace WineApi.Repositories
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
-            var winery = new Winery { Id = $"ry_{Guid.CreateVersion7()}", Name = name.Trim() };
+            var winery = new Winery
+            {
+                Id = $"{EntityIdPrefixes.WineryPrefix}{Guid.CreateVersion7()}",
+                Name = name.Trim(),
+            };
 
             var response = await _wineryContainer
                 .UpsertItemAsync(
@@ -46,9 +50,28 @@ namespace WineApi.Repositories
             return response.Resource.Id;
         }
 
-        public Task<Winery> GetWineryAsync(string id, CancellationToken cancellationToken = default)
+        public async Task<Winery> GetWineryAsync(
+            string id,
+            CancellationToken cancellationToken = default
+        )
         {
-            throw new NotImplementedException();
+            ArgumentException.ThrowIfNullOrWhiteSpace(id);
+
+            var response = await _wineryContainer
+                .ReadItemAsync<Winery>(
+                    id,
+                    new PartitionKey(id),
+                    cancellationToken: cancellationToken
+                )
+                .ConfigureAwait(false);
+
+            _logger.LogInformation(
+                "Winery retrieved. Response from Cosmos: StatusCode={StatusCode} RU's={RUs}",
+                response.StatusCode,
+                response.RequestCharge
+            );
+
+            return response.Resource;
         }
     }
 }

@@ -7,7 +7,7 @@ public sealed class Program
 {
     private Program() { }
 
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +19,10 @@ public sealed class Program
         builder.Services.AddOpenApi();
         builder.Services.AddSwaggerGen();
 
-        builder.AddCosmos();
+        var parsed = bool.TryParse(builder.Configuration["Cosmos:UseEmulator"], out var value);
+        var useEmulator = parsed && value;
+
+        builder.AddCosmos(useEmulator);
         builder.AddRepositories();
 
         var app = builder.Build();
@@ -28,12 +31,17 @@ public sealed class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+
+            if (useEmulator)
+            {
+                await app.CreateLocalCosmosDatabaseAsync().ConfigureAwait(false);
+            }
         }
 
         app.UseExceptionHandler();
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
-        app.Run();
+        await app.RunAsync();
     }
 }
