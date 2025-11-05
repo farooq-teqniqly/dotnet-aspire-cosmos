@@ -79,6 +79,13 @@ dotnet_style_object_initializer = true:suggestion
 # CA1515: Consider making public types internal
 dotnet_diagnostic.CA1515.severity = none
 
+# CA1848: Use the LoggerMessage delegates
+dotnet_diagnostic.CA1848.severity = suggestion
+
+[**/Program.cs]
+# CA2007: Do not directly await a Task
+dotnet_diagnostic.CA2007.severity = none
+
 [**/ValidationExceptionHandler.cs]
 # CA1308: In method 'TryHandleAsync', replace the call to 'ToLowerInvariant' with 'ToUpperInvariant'
 dotnet_diagnostic.CA1308.severity = none

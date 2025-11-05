@@ -3,8 +3,6 @@ using System.Net.Http.Json;
 using WineApi.Dtos.Wineries;
 using WineApi.Entities;
 
-[assembly: CLSCompliant(false)]
-
 namespace WineApi.Tests.Wineries;
 
 public sealed class WineriesTests : IClassFixture<WineApiWebApplicationFactory>

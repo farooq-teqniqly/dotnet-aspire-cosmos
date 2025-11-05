@@ -30,7 +30,9 @@ namespace WineApi.Controllers
             await validator.ValidateAndThrowAsync(createWineryDto).ConfigureAwait(false);
 
             var createWineryResult = await _wineryRepository
+#pragma warning disable CA1062
                 .CreateWineryAsync(createWineryDto.Name, HttpContext.RequestAborted)
+#pragma warning restore CA1062
                 .ConfigureAwait(false);
 
             if (createWineryResult.IsSuccess)
