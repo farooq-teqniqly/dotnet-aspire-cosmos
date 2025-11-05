@@ -22,7 +22,9 @@ namespace WineApi.Controllers
             var winery = new Winery
             {
                 Id = $"wn_{Guid.CreateVersion7()}",
+#pragma warning disable CA1062
                 Name = createWineryDto.Name.Trim(),
+#pragma warning restore CA1062
             };
 
             var wineryDto = new WineryDto(
