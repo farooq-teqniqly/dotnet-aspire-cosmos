@@ -1,4 +1,4 @@
-namespace WineApi.Entities
+﻿namespace WineApi.Entities
 {
     public sealed class Winery
     {

@@ -1,7 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using WineApi.Dtos.Wineries;
-using WineApi.Entities;
+using WineApi.Repositories;
 
 namespace WineApi.Controllers
 {
@@ -9,33 +9,34 @@ namespace WineApi.Controllers
     [Route("wineries")]
     public sealed class WineriesController : ControllerBase
     {
+        private readonly IWineryRepository _wineryRepository;
+
+        public WineriesController(IWineryRepository wineryRepository)
+        {
+            ArgumentNullException.ThrowIfNull(wineryRepository);
+
+            _wineryRepository = wineryRepository;
+        }
+
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<WineryDto>> CreateWinery(
+        public async Task<ActionResult<CreateWineryResponseDto>> CreateWinery(
             [FromBody] CreateWineryDto createWineryDto,
             IValidator<CreateWineryDto> validator
         )
         {
             await validator.ValidateAndThrowAsync(createWineryDto).ConfigureAwait(false);
 
-            var winery = new Winery
-            {
-                Id = $"wn_{Guid.CreateVersion7()}",
-#pragma warning disable CA1062
-                Name = createWineryDto.Name.Trim(),
-#pragma warning restore CA1062
-            };
+            var wineryId = await _wineryRepository
+                .CreateWineryAsync(createWineryDto.Name, HttpContext.RequestAborted)
+                .ConfigureAwait(false);
 
-            var wineryDto = new WineryDto(
-                winery.Id,
-                winery.Name,
-                winery.CreatedAtUtc,
-                winery.UpdatedAtUtc
+            return CreatedAtAction(
+                nameof(GetWinery),
+                new { wineryId },
+                new CreateWineryResponseDto(wineryId)
             );
-
-            await Task.CompletedTask.ConfigureAwait(false);
-            return CreatedAtAction(nameof(GetWinery), new { wineryId = wineryDto.Id }, wineryDto);
         }
 
         [HttpGet("{wineryId}")]

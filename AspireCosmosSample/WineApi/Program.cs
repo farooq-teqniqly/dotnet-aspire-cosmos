@@ -19,6 +19,9 @@ public sealed class Program
         builder.Services.AddOpenApi();
         builder.Services.AddSwaggerGen();
 
+        builder.AddCosmos();
+        builder.AddRepositories();
+
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
