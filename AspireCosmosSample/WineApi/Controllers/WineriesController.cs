@@ -1,7 +1,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using WineApi.Dtos.Wineries;
-using WineApi.Errors;
 using WineApi.Repositories;
 
 namespace WineApi.Controllers
@@ -53,14 +52,25 @@ namespace WineApi.Controllers
 
         [HttpGet("{wineryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<WineryDto>> GetWinery(string wineryId)
         {
-            var winery = await _wineryRepository
+            var getWineryResult = await _wineryRepository
                 .GetWineryAsync(wineryId, HttpContext.RequestAborted)
                 .ConfigureAwait(false);
 
-            return Ok(
-                new WineryDto(winery.Id, winery.Name, winery.CreatedAtUtc, winery.UpdatedAtUtc)
+            if (getWineryResult.IsSuccess)
+            {
+                var winery = getWineryResult.GetValue();
+
+                return Ok(
+                    new WineryDto(winery.Id, winery.Name, winery.CreatedAtUtc, winery.UpdatedAtUtc)
+                );
+            }
+
+            return Problem(
+                getWineryResult.GetError().Message,
+                statusCode: StatusCodes.Status404NotFound
             );
         }
     }

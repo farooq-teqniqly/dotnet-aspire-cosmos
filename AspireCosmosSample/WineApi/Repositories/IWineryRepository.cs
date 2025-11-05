@@ -1,4 +1,3 @@
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Teqniqly.Results;
 using WineApi.Entities;
 
@@ -10,6 +9,9 @@ namespace WineApi.Repositories
             string name,
             CancellationToken cancellationToken = default
         );
-        Task<Winery> GetWineryAsync(string id, CancellationToken cancellationToken = default);
+        Task<IResult<Winery>> GetWineryAsync(
+            string id,
+            CancellationToken cancellationToken = default
+        );
     }
 }

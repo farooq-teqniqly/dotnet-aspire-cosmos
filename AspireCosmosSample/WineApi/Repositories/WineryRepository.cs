@@ -1,3 +1,4 @@
+using System.Net;
 using Microsoft.Azure.Cosmos;
 using Teqniqly.Results;
 using WineApi.Entities;
@@ -60,28 +61,36 @@ namespace WineApi.Repositories
             return Result.Success(response.Resource.Id);
         }
 
-        public async Task<Winery> GetWineryAsync(
+        public async Task<IResult<Winery>> GetWineryAsync(
             string id,
             CancellationToken cancellationToken = default
         )
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(id);
 
-            var response = await _wineryContainer
-                .ReadItemAsync<Winery>(
-                    id,
-                    new PartitionKey(id),
-                    cancellationToken: cancellationToken
-                )
-                .ConfigureAwait(false);
+            try
+            {
+                var response = await _wineryContainer
+                    .ReadItemAsync<Winery>(
+                        id,
+                        new PartitionKey(id),
+                        cancellationToken: cancellationToken
+                    )
+                    .ConfigureAwait(false);
 
-            _logger.LogInformation(
-                "Winery retrieved. Response from Cosmos: StatusCode={StatusCode} RU's={RUs}",
-                response.StatusCode,
-                response.RequestCharge
-            );
+                _logger.LogInformation(
+                    "Winery retrieved. Response from Cosmos: StatusCode={StatusCode} RU's={RUs}",
+                    response.StatusCode,
+                    response.RequestCharge
+                );
 
-            return response.Resource;
+                return Result.Success(response.Resource);
+            }
+            catch (CosmosException cosmosException)
+                when (cosmosException.StatusCode == HttpStatusCode.NotFound)
+            {
+                return Result.Failure<Winery>(new WineryNotFoundError(id));
+            }
         }
 
         private async Task<string?> GetWineryIdByNameAsync(

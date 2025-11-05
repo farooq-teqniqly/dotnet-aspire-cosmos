@@ -4,7 +4,10 @@ namespace WineApi.Tests
     {
         internal static class Wineries
         {
-            internal static string Create = "wineries";
+            private static string Root = "wineries";
+            internal static string Create = Root;
+
+            internal static string GetById(string id) => $"{Root}/{id}";
         }
     }
 }
