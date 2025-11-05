@@ -19,6 +19,7 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 -   **SOLID principles**: Follow Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion principles
 -   **DRY principle**: Don't Repeat Yourself - extract common code into reusable components
 -   **Clean code**: Write self-documenting code with meaningful names and clear structure
+-   **Using statements**: Remove all unused using statements to keep code clean and maintainable
 
 ## C# Specific Guidelines
 
@@ -33,6 +34,7 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 -   **Unit tests**: Write unit tests for all business logic
 -   **Test naming**: Use descriptive test method names following the pattern `MethodName_Scenario_ExpectedResult`
 -   **Test coverage**: Aim for high test coverage, especially for critical business logic
+-   **Test structure**: Include `// Arrange`, `// Act`, and `// Assert` comments in each test to clearly separate the three phases
 -   **Assertion library**: Use the built-in assertion library (`Assert`) - do not use 3rd party libraries like FluentAssertions
 -   **Mocking framework**: If mocking is required, use NSubstitute
 
@@ -43,6 +45,13 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 -   **Content structure**: Include summary of findings, detailed issues with references, suggested fixes, and action items
 -   **Input validation**: Arguments to public methods should be validated
 -   **API validation**: In API controller methods, validate request bodies and query parameters
+-   **API response types**: All API controller methods must document their possible response status codes using `ProducesResponseType` attributes.
+    For example:
+
+        ```csharp
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        ```
 
 ## Documentation
 
