@@ -22,42 +22,8 @@ param subscriptions array = [
 @description('Array of container configurations')
 param containers array = [
   {
-    name: 'Wines'
+    name: 'wineries'
     partitionKeyPath: '/id'
-    indexingPolicy: {
-      indexingMode: 'consistent'
-      includedPaths: [
-        {
-          path: '/*'
-        }
-      ]
-      excludedPaths: [
-        {
-          path: '/_etag/?'
-        }
-      ]
-    }
-  }
-  {
-    name: 'Wineries'
-    partitionKeyPath: '/id'
-    indexingPolicy: {
-      indexingMode: 'consistent'
-      includedPaths: [
-        {
-          path: '/*'
-        }
-      ]
-      excludedPaths: [
-        {
-          path: '/_etag/?'
-        }
-      ]
-    }
-  }
-  {
-    name: 'Regions'
-    partitionKeyPath: '/rootId'
     indexingPolicy: {
       indexingMode: 'consistent'
       includedPaths: [
