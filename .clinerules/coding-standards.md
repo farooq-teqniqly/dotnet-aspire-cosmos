@@ -26,6 +26,7 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 - **Exception handling**: Use specific exception types and avoid catching generic Exception
 - **Null safety**: Prefer nullable reference types and use null-coalescing operators appropriately
 - **LINQ**: Use LINQ for data transformations when it improves readability
+- **CLS compliance**: Mark all assemblies with `[assembly: CLSCompliant(true)]` or `[assembly: CLSCompliant(false)]` to explicitly declare CLS compliance
 
 ## Testing
 
