@@ -1,5 +1,7 @@
-﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos;
+using Teqniqly.Results;
 using WineApi.Entities;
+using WineApi.Errors;
 
 namespace WineApi.Repositories
 {
@@ -20,12 +22,20 @@ namespace WineApi.Repositories
             _logger = logger;
         }
 
-        public async Task<string> CreateWineryAsync(
+        public async Task<IResult<string>> CreateWineryAsync(
             string name,
             CancellationToken cancellationToken = default
         )
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+            var existingWineryId = await GetWineryIdByNameAsync(name, cancellationToken)
+                .ConfigureAwait(false);
+
+            if (existingWineryId is not null)
+            {
+                return Result.Failure<string>(new WineryAlreadyExistsError(name));
+            }
 
             var winery = new Winery
             {
@@ -47,7 +57,7 @@ namespace WineApi.Repositories
                 response.RequestCharge
             );
 
-            return response.Resource.Id;
+            return Result.Success(response.Resource.Id);
         }
 
         public async Task<Winery> GetWineryAsync(
@@ -72,6 +82,36 @@ namespace WineApi.Repositories
             );
 
             return response.Resource;
+        }
+
+        private async Task<string?> GetWineryIdByNameAsync(
+            string name,
+            CancellationToken cancellationToken = default
+        )
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+            var q = new QueryDefinition(
+                "SELECT TOP 1 c.id FROM c WHERE LOWER(c.name) = LOWER(@name)"
+            ).WithParameter("@name", name);
+
+            using (
+                var feed = _wineryContainer.GetItemQueryIterator<dynamic>(
+                    q,
+                    requestOptions: new QueryRequestOptions { MaxItemCount = 1 }
+                )
+            )
+            {
+                if (!feed.HasMoreResults)
+                {
+                    return null;
+                }
+
+                var page = await feed.ReadNextAsync(cancellationToken).ConfigureAwait(false);
+                var first = page.Resource.FirstOrDefault();
+
+                return (string?)first?.id;
+            }
         }
     }
 }

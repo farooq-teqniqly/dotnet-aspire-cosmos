@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using WineApi.Dtos.Wineries;
+using WineApi.Errors;
 using WineApi.Repositories;
 
 namespace WineApi.Controllers
@@ -21,6 +22,7 @@ namespace WineApi.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<ActionResult<CreateWineryResponseDto>> CreateWinery(
             [FromBody] CreateWineryDto createWineryDto,
             IValidator<CreateWineryDto> validator
@@ -28,14 +30,24 @@ namespace WineApi.Controllers
         {
             await validator.ValidateAndThrowAsync(createWineryDto).ConfigureAwait(false);
 
-            var wineryId = await _wineryRepository
+            var createWineryResult = await _wineryRepository
                 .CreateWineryAsync(createWineryDto.Name, HttpContext.RequestAborted)
                 .ConfigureAwait(false);
 
-            return CreatedAtAction(
-                nameof(GetWinery),
-                new { wineryId },
-                new CreateWineryResponseDto(wineryId)
+            if (createWineryResult.IsSuccess)
+            {
+                var wineryId = createWineryResult.GetValue();
+
+                return CreatedAtAction(
+                    nameof(GetWinery),
+                    new { wineryId },
+                    new CreateWineryResponseDto(wineryId)
+                );
+            }
+
+            return Problem(
+                createWineryResult.GetError().Message,
+                statusCode: StatusCodes.Status409Conflict
             );
         }
 

@@ -19,7 +19,8 @@ public sealed class WineriesTests : IClassFixture<WineApiWebApplicationFactory>
     public async Task CreateWinery_When_Given_Valid_Parameters_ShouldSucceed()
     {
         // Arrange
-        var createWineryDto = new CreateWineryDto("DeLille Cellars");
+        var wineryName = Guid.NewGuid().ToString();
+        var createWineryDto = new CreateWineryDto(wineryName);
 
         var client = _factory.CreateClient();
 
@@ -37,5 +38,22 @@ public sealed class WineriesTests : IClassFixture<WineApiWebApplicationFactory>
             response.Headers.Location!.ToString(),
             StringComparison.OrdinalIgnoreCase
         );
+    }
+
+    [Fact]
+    public async Task CreateWinery_When_Name_Is_Duplicate_ShouldFail()
+    {
+        // Arrange
+        var wineryName = Guid.NewGuid().ToString();
+        var createWineryDto = new CreateWineryDto(wineryName);
+
+        var client = _factory.CreateClient();
+        await client.PostAsJsonAsync(Routes.Wineries.Create, createWineryDto);
+
+        // Act
+        var response = await client.PostAsJsonAsync(Routes.Wineries.Create, createWineryDto);
+
+        // Assert
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
     }
 }
