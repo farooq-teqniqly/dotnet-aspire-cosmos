@@ -6,11 +6,20 @@ using WineApi.Errors;
 
 namespace WineApi.Repositories
 {
+    /// <summary>
+    /// Implements repository operations for wineries using Azure Cosmos DB.
+    /// </summary>
     public class WineryRepository : IWineryRepository
     {
         private readonly ILogger<WineryRepository> _logger;
         private readonly Container _wineryContainer;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WineryRepository"/> class.
+        /// </summary>
+        /// <param name="wineryContainer">The Cosmos DB container for wineries.</param>
+        /// <param name="logger">The logger instance.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="wineryContainer"/> or <paramref name="logger"/> is null.</exception>
         public WineryRepository(
             [FromKeyedServices(CosmosDbConstants.Containers.Wineries)] Container wineryContainer,
             ILogger<WineryRepository> logger
@@ -23,6 +32,13 @@ namespace WineApi.Repositories
             _logger = logger;
         }
 
+        /// <summary>
+        /// Creates a new winery with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the winery to create.</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+        /// <returns>A result containing the ID of the newly created winery on success, or an error on failure.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> is null or whitespace.</exception>
         public async Task<IResult<string>> CreateWineryAsync(
             string name,
             CancellationToken cancellationToken = default
@@ -61,6 +77,13 @@ namespace WineApi.Repositories
             return Result.Success(response.Resource.Id);
         }
 
+        /// <summary>
+        /// Retrieves a winery by its unique identifier.
+        /// </summary>
+        /// <param name="id">The unique identifier of the winery to retrieve.</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+        /// <returns>A result containing the winery on success, or an error on failure.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="id"/> is null or whitespace.</exception>
         public async Task<IResult<Winery>> GetWineryAsync(
             string id,
             CancellationToken cancellationToken = default
@@ -93,6 +116,13 @@ namespace WineApi.Repositories
             }
         }
 
+        /// <summary>
+        /// Retrieves the winery ID by searching for a winery with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the winery to search for.</param>
+        /// <param name="cancellationToken">A cancellation token to cancel the operation.</param>
+        /// <returns>The ID of the winery if found; otherwise, null.</returns>
+        /// <exception cref="ArgumentException">Thrown when <paramref name="name"/> is null or whitespace.</exception>
         private async Task<string?> GetWineryIdByNameAsync(
             string name,
             CancellationToken cancellationToken = default

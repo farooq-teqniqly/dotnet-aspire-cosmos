@@ -2,8 +2,14 @@
 
 namespace WineApi.Dtos.Wineries
 {
+    /// <summary>
+    /// Validator for <see cref="CreateWineryDto"/>.
+    /// </summary>
     public sealed class CreateWineryDtoValidator : AbstractValidator<CreateWineryDto>
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CreateWineryDtoValidator"/> class.
+        /// </summary>
         public CreateWineryDtoValidator()
         {
             RuleFor(x => x.Name)

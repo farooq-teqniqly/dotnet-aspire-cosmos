@@ -11,6 +11,11 @@ namespace WineApi.Controllers
     {
         private readonly IWineryRepository _wineryRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WineriesController"/> class.
+        /// </summary>
+        /// <param name="wineryRepository">The repository for managing winery data.</param>
+        /// <exception cref="ArgumentNullException">Thrown when <paramref name="wineryRepository"/> is null.</exception>
         public WineriesController(IWineryRepository wineryRepository)
         {
             ArgumentNullException.ThrowIfNull(wineryRepository);
@@ -18,6 +23,15 @@ namespace WineApi.Controllers
             _wineryRepository = wineryRepository;
         }
 
+        /// <summary>
+        /// Creates a new winery.
+        /// </summary>
+        /// <param name="createWineryDto">The data required to create a new winery.</param>
+        /// <param name="validator">The validator for the create winery DTO.</param>
+        /// <returns>A response containing the ID of the newly created winery.</returns>
+        /// <response code="201">Returns the newly created winery's ID.</response>
+        /// <response code="400">If the request body is invalid.</response>
+        /// <response code="409">If a winery with the same name already exists.</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -52,6 +66,13 @@ namespace WineApi.Controllers
             );
         }
 
+        /// <summary>
+        /// Retrieves a winery by its ID.
+        /// </summary>
+        /// <param name="wineryId">The unique identifier of the winery to retrieve.</param>
+        /// <returns>The winery details if found.</returns>
+        /// <response code="200">Returns the requested winery.</response>
+        /// <response code="404">If the winery with the specified ID is not found.</response>
         [HttpGet("{wineryId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
