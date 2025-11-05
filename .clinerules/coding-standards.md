@@ -53,6 +53,10 @@ tags: ["coding-standards", "dotnet", "best-practices"]
 - **Minimal dependencies**: Only add dependencies that are necessary and well-maintained
 - **Version pinning**: Use specific versions for dependencies to ensure reproducible builds
 - **Security**: Regularly update dependencies to address security vulnerabilities
+- **Centralized package management**: Use Directory.Packages.props for centralized NuGet package version management
+  - Remove duplicate elements from .csproj files
+  - Ensure .csproj files contain correct PackageReference entries without version attributes
+  - Maintain accurate PackageVersion entries in Directory.Packages.props
 
 ## Performance
 
